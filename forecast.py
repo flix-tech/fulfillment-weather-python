@@ -119,8 +119,7 @@ class Forecast(object):
 
         # Get the furthest date in the future we can get a forecast for
         max_forecast_date = dt.now().date() + timedelta(days=MAX_FORECAST_LEN)
-        furthest_date_requested = dt.combine(date_start,
-                                             timedelta(days=forecast_length))
+        furthest_date_requested = date_start + timedelta(days=forecast_length)
 
         # Check to see that the forecast dates requested are not too far into
         # the future
@@ -129,10 +128,13 @@ class Forecast(object):
                 'I couldn\'t find a forecast for that far in the future.')
 
         # Get the weather for each day (each needs a separate API call)
+        forecast = None
         for day in range(forecast_length):
             current_date = date_start + timedelta(days=day)
 
             response = self.__call_wwo_api(current_date.strftime('%Y-%m-%d'))
+            if not forecast:
+                forecast = response
 
             try:
                 forecast['weather'].append(response['weather'][0])
