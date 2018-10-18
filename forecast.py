@@ -184,7 +184,7 @@ class Forecast(object):
             for hour in day['hourly']:
                 temps.append(int(hour['temp' + self.unit]))
 
-        return (max(temps), min(temps))
+        return max(temps), min(temps)
 
     def get_datetime_response(self):
         """Takes a datetime and forecast
@@ -268,7 +268,7 @@ class Forecast(object):
             # Calculate the average temperature for the time period
             avg_temp = sum(temps) / len(temps)
             # Make a human readable string of the temperature
-            temperature = str(avg_temp) + u'°'.encode('utf-8') + self.unit
+            temperature = str(avg_temp) + u'°' + self.unit
 
             # Get the conditions for the time period
             condition = forecast['weather'][0]['hourly'][
@@ -283,6 +283,8 @@ class Forecast(object):
                 time_period = 'tonight'
             elif datetime_start.hour <= 8 and datetime_end.hour <= 12:
                 time_period = 'morning'
+            else:
+                time_period = None
 
             # if the time period can be described with a word use it here
             if time_period:
@@ -458,8 +460,7 @@ class Forecast(object):
 
         # Get the temperature by average the high and low for the day
         temp = self.forecast['current_condition'][0]['temp_' + self.unit]
-        temperature = temp.encode(
-            'utf-8') + u'°'.encode('utf-8') + self.unit.encode('utf-8')
+        temperature = temp + '°' + self.unit
 
         # Get the conditions in the middle of the day
         condition = self.forecast['weather'][0][
@@ -493,6 +494,7 @@ def validate_params(parameters):
         error_response += 'please specify city '
 
     # Date-time and date-periods
+    datetime_input = None
     if parameters.get('date-time') or parameters.get('date-period'):
         # Get the date time or date period (can't be both)
         if parameters.get('date-time'):

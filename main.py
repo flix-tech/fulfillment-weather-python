@@ -55,6 +55,7 @@ def webhook():
     elif action == 'weather.temperature':
         res = weather_temperature(req)
     else:
+        res = None
         log.error('Unexpected action.')
 
     print('Action: ' + action)
