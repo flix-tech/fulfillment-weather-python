@@ -547,8 +547,12 @@ def parse_datetime_input(datetime_input):
     """
 
     # Date time
+    # If the argument is absent, we default to Nones
+    if datetime_input is None:
+        datetime_start = None
+        datetime_end = None
     # If the string is length 8 datetime_input has the form 17:30:00
-    if len(datetime_input) == 8:
+    elif len(datetime_input) == 8:
         # if only the time is provided assume its for the current date
         current_date = dt.now().strftime('%Y-%m-%dT')
 
