@@ -40,11 +40,17 @@ def webhook():
     """
     req = request.get_json(silent=True, force=True)
     try:
-        action = req.get('queryResult').get('action')
+        if 'knowledgeAnswers' in req.get('queryResult'):
+            action = 'knowledge_base'
+        else:
+            action = req.get('queryResult').get('action')
+        print(f'Action: {action}')
     except AttributeError:
         return 'json error'
 
-    if action == 'weather':
+    if action == 'knowledge_base':
+        res = req.get('queryResult').get('knowledgeAnswers').get('answers')[0].get('answer')
+    elif action == 'weather':
         res = weather(req)
     elif action == 'weather.activity':
         res = weather_activity(req)
@@ -58,7 +64,6 @@ def webhook():
         res = None
         log.error('Unexpected action.')
 
-    print('Action: ' + action)
     print('Response: ' + res)
 
     return make_response(jsonify({'fulfillmentText': res}))
