@@ -214,7 +214,7 @@ def weather_temperature(req):
         return error
 
     # If the user didn't specify a temperature, get the weather for them
-    if not forecast_params['temperature']:
+    if not forecast_params.get('temperature'):
         return weather(req)
 
     # create a forecast object which retrieves the forecast from a external API
